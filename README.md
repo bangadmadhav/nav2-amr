@@ -1,2 +1,2 @@
-# travel-time-prediction-amr
-Predicting AMR travel time in simulated environments using ROS2, Nav2, and supervised learning — bridging the gap between planned paths and actual execution time.
+# AMR - Travel Time Prediction
+Most robotics research focuses on where a robot goes. This project asks how long it will actually take — and builds the infrastructure to answer that question at scale. RoboETA is a dataset generation engine and learning-based prediction system for Autonomous Mobile Robots, built on ROS2 and Nav2. It simulates structured environments like warehouses, hospitals, and offices, logs spatiotemporal execution data, and trains models to predict travel time from map features, robot specs, and planned path geometry — the way Google Maps predicts your drive time before you leave.
