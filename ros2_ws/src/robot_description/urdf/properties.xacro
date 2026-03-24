@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+<!-- PROPERTIES -->
+    <!-- Chassis box dimensions -->
+    <xacro:property name="chassis_length"   value="0.20"/>  <!-- X: front to back -->
+    <xacro:property name="chassis_width"    value="0.28"/>  <!-- Y: left to right -->
+    <xacro:property name="chassis_height"   value="0.10"/>  <!-- Z: bottom to top -->
+
+    <!-- Wheel dimensions -->
+    <xacro:property name="wheel_radius"     value="0.050"/> 
+    <xacro:property name="wheel_width"      value="0.026"/> 
+    <xacro:property name="wheel_separation" value="0.306"/>  
+
+    <!-- Caster wheel -->
+    <xacro:property name="caster_radius"    value="0.025"/>
+    
+    <!-- LiDAR -->
+    <xacro:property name="lidar_radius"     value="0.04"/>
+    <xacro:property name="lidar_height"     value="0.1"/>
+
+    <!-- Mass values (kg) -->
+    <xacro:property name="chassis_mass"     value="3"/>  
+    <xacro:property name="wheel_mass"       value="0.12"/>  
+    <xacro:property name="caster_mass"      value="0.02"/>
+
+<!-- MATERIALS -->
+    <material name="blue_acrylic">
+        <color rgba="0.2 0.4 0.8 1.0"/>
+    </material>
+
+    <material name="black_rubber">
+        <color rgba="0.1 0.1 0.1 1.0"/>
+    </material>
+
+    <material name="grey_caster">
+        <color rgba="0.6 0.6 0.6 1.0"/>
+    </material>
+
+    <material name="orange">
+        <color rgba="1.0 0.5 0.0 1.0"/>
+    </material>
+
+    <material name="yellow">
+        <color rgba="1.0 1.0 0.0 1.0"/>
+    </material>
+
+</robot>

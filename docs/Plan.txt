@@ -1,0 +1,20 @@
+-----------
+Checkpoint 1
+-----------
+- Task Details: Complete the setup of gazebo and ros2 required for navigation and path planning required for structured environments (No SLAM required at this level, the map will be loaded explicitly also no Dynamic Obstacles to this point)
+- Modules to Cover: Path Planning, Navigation, Basic Setup of ROS2 + Gazebo
+- Deadline: 30 March 2026
+
+
+-----------
+Checkpoint 2
+-----------
+- Task Details: Integrate the Local Localization + Global Localization such that robot could move properly in environment with dynamic obstacles (still the map will be loaded explicitly)
+- Deadline: 3 April 2026
+
+
+-----------
+Checkpoint 3
+-----------
+- Task Details: SLAM integration, Robot is fully ready for first batch of data logging as per dataset schema to make the machine learning model of travel_time_prediction
+- Deadline: 8 April 2026
