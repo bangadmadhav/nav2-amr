@@ -26,12 +26,13 @@
     <!-- Gazebo Harmonic sensor plugin -->
     <gazebo reference="lidar_link">
         <sensor name="lidar_sensor" type="gpu_lidar">
-            <pose relative_to="lidar_link">0 0 0 0 0 0</pose>
-
             <topic>scan</topic>
             <update_rate>10</update_rate>
             <always_on>true</always_on>
             <visualize>true</visualize>
+            <frame>
+                <pose relative_to="lidar_link">0 0 0 0 0 0</pose>
+            </frame>
             <lidar>
                 <scan>
                     <horizontal>
@@ -58,6 +59,9 @@
     <gazebo>
         <plugin filename="libgz_ros2_control-system.so" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
             <parameters>$(find robot_bringup)/config/controllers.yaml</parameters>
+            <ros>
+                <remapping>/diff_drive_controller/odom:=/odom</remapping>
+            </ros>
         </plugin>
     </gazebo>
 </robot>

@@ -1,10 +1,11 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, TimerAction
 from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
+
 
 from launch_ros.parameter_descriptions import ParameterValue
 
@@ -31,7 +32,7 @@ def generate_launch_description():
     # Launch Argument for World Name
     world_name_arg = DeclareLaunchArgument(
         'world_name',
-        default_value='empty',
+        default_value='testWorld',
         description='Name of the world file to load (without .sdf extension)'
     )
 
@@ -82,38 +83,90 @@ def generate_launch_description():
         arguments=["-topic", "robot_description"]
     )
 
-    # ROS-Gazebo bridge
-    bridge_node = Node(
-        package="ros_gz_bridge",
-        executable="parameter_bridge",
-        parameters=[{
-            "config_file": os.path.join(bringup_pkg_share, "config", "gazebo_bridge.yaml")
-        }],
-        output="screen"
+    # # ROS-Gazebo bridge
+    # bridge_node = Node(
+    #     package="ros_gz_bridge",
+    #     executable="parameter_bridge",
+    #     parameters=[{
+    #         "config_file": os.path.join(bringup_pkg_share, "config", "gazebo_bridge.yaml")
+    #     }],
+    #     output="screen"
+    # )
+
+    # # Controller spawners
+    # # Note: controller_manager is started by gz_ros2_control plugin in Gazebo,
+    # # so we only need spawners here, NOT ros2_control_node
+    # joint_state_broadcaster_spawner = Node(
+    #     package="controller_manager",
+    #     executable="spawner",
+    #     arguments=[
+    #         "joint_state_broadcaster",
+    #         "--controller-manager",
+    #         "/controller_manager"
+    #     ],
+    # )
+
+    # diff_drive_controller_spawner = Node(
+    #     package='controller_manager',
+    #     executable='spawner',
+    #     arguments=[
+    #         'diff_drive_controller',
+    #         '--controller-manager',
+    #         '/controller_manager'
+    #     ],
+    #     output='screen',
+    # )
+
+        # Delay bridge to ensure sensor topics are available
+    delayed_bridge = TimerAction(
+        period=5.0,
+        actions=[
+            Node(
+                package="ros_gz_bridge",
+                executable="parameter_bridge",
+                parameters=[{
+                    "config_file": os.path.join(bringup_pkg_share, "config", "gazebo_bridge.yaml")
+                }],
+                output="screen"
+            )
+        ]
     )
 
-    # Controller spawners
-    # Note: controller_manager is started by gz_ros2_control plugin in Gazebo,
-    # so we only need spawners here, NOT ros2_control_node
-    joint_state_broadcaster_spawner = Node(
-        package="controller_manager",
-        executable="spawner",
-        arguments=[
-            "joint_state_broadcaster",
-            "--controller-manager",
-            "/controller_manager"
-        ],
+    # Delay controller spawners slightly after bridge
+    delayed_controllers = TimerAction(
+        period=6.0,
+        actions=[
+            Node(
+                package="controller_manager",
+                executable="spawner",
+                arguments=[
+                    "joint_state_broadcaster",
+                    "--controller-manager",
+                    "/controller_manager"
+                ],
+            ),
+            Node(
+                package='controller_manager',
+                executable='spawner',
+                arguments=[
+                    'diff_drive_controller',
+                    '--controller-manager',
+                    '/controller_manager'
+                ],
+                output='screen',
+            )
+        ]
     )
 
-    diff_drive_controller_spawner = Node(
-        package='controller_manager',
-        executable='spawner',
+    odom_relay_node = Node(
+        package='topic_tools',
+        executable='relay',
+        name='odom_relay',
         arguments=[
-            'diff_drive_controller',
-            '--controller-manager',
-            '/controller_manager'
+            '/diff_drive_controller/odom',
+            '/odom'
         ],
-        output='screen',
+        output='screen'
     )
 
     return LaunchDescription([
@@ -122,7 +175,10 @@ def generate_launch_description():
         rviz_node,
         gazebo_node,
         spawn_robot_node,
-        bridge_node,
-        joint_state_broadcaster_spawner,
-        diff_drive_controller_spawner
+        # bridge_node,
+        # joint_state_broadcaster_spawner,
+        # diff_drive_controller_spawner
+        delayed_bridge,
+        delayed_controllers,
+        odom_relay_node
     ])
