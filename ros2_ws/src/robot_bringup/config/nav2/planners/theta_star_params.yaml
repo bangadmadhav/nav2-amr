@@ -1,0 +1,11 @@
+planner_server:
+  ros__parameters:
+    use_sim_time: true
+    planner_plugins: [GridBased]
+
+    GridBased:
+      plugin: nav2_theta_star_planner::ThetaStarPlanner
+      how_many_corners: 8     # 8-connected grid for smoother paths
+      w_euc_cost: 1.0         # weight for euclidean distance cost
+      w_traversal_cost: 2.0   # weight for traversal cost
+      w_heuristic_cost: 1.0   # weight for heuristic

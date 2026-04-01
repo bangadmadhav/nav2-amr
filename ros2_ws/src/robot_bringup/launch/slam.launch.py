@@ -18,13 +18,6 @@ def generate_launch_description():
         }]
     )
 
-    scan_frame_fixer_node = Node(
-        package='testing',
-        executable='scan_frame_fixer',
-        name='scan_frame_fixer',
-        output='screen'
-    )
-
     twist_to_stamped_node = Node(
         package='testing',
         executable='twist_to_stamped',
@@ -33,7 +26,6 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        scan_frame_fixer_node,
         twist_to_stamped_node,
         slam_toolbox_node,
     ])

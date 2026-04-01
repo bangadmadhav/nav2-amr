@@ -22,6 +22,7 @@ private:
     {
         auto fixed_msg = *msg;
         fixed_msg.header.frame_id = "lidar_link";
+        fixed_msg.header.stamp = this->get_clock()->now();
 
         pub_->publish(fixed_msg);
     }

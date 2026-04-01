@@ -20,7 +20,7 @@ def generate_launch_description():
 
     # Define various paths
     urdf_file = os.path.join(description_pkg_share, 'urdf', 'robot_description.urdf.xacro')
-    rviz_config_file = os.path.join(bringup_pkg_share, 'config', 'displayTest.rviz')
+    rviz_config_file = os.path.join(bringup_pkg_share, 'config', 'newDisplayTest.rviz')
     controllers_yaml = os.path.join(bringup_pkg_share, 'config', 'controllers.yaml')
 
     # robot_description parameter
@@ -32,7 +32,7 @@ def generate_launch_description():
     # Launch Argument for World Name
     world_name_arg = DeclareLaunchArgument(
         'world_name',
-        default_value='testWorld',
+        default_value='world2',
         description='Name of the world file to load (without .sdf extension)'
     )
 
@@ -154,6 +154,9 @@ def generate_launch_description():
                     '/controller_manager'
                 ],
                 output='screen',
+                remappings=[
+                    ('cmd_vel', '/cmd_vel_stamped')
+                ]
             )
         ]
     )
@@ -169,6 +172,25 @@ def generate_launch_description():
         output='screen'
     )
 
+    scan_frame_fixer_node = Node(
+        package='testing',
+        executable='scan_frame_fixer',
+        name='scan_frame_fixer',
+        output='screen',
+        parameters=[{'use_sim_time': True}]
+    )
+
+    twist_to_stamped_node = Node(
+        package='testing',
+        executable='twist_to_stamped',
+        name='twist_to_stamped',
+        parameters=[{
+            'input_topic': '/cmd_vel_smoothed',
+            'output_topic': '/diff_drive_controller/cmd_vel'  # ← direct to controller
+        }]
+    )
+
+
     return LaunchDescription([
         world_name_arg,
         robot_state_publisher_node,
@@ -180,5 +202,7 @@ def generate_launch_description():
         # diff_drive_controller_spawner
         delayed_bridge,
         delayed_controllers,
-        odom_relay_node
+        odom_relay_node,
+        scan_frame_fixer_node,
+        twist_to_stamped_node
     ])
