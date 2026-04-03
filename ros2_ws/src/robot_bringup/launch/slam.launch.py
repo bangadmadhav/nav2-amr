@@ -22,10 +22,14 @@ def generate_launch_description():
         package='testing',
         executable='twist_to_stamped',
         name='twist_to_stamped',
-        output='screen'
+        parameters=[{
+            'use_sim_time': True,
+            'input_topic': '/cmd_vel',
+            'output_topic': '/diff_drive_controller/cmd_vel'  # ← direct to controller
+        }]
     )
 
     return LaunchDescription([
-        twist_to_stamped_node,
         slam_toolbox_node,
+        twist_to_stamped_node
     ])

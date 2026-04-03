@@ -32,7 +32,7 @@ def generate_launch_description():
     # Launch Argument for World Name
     world_name_arg = DeclareLaunchArgument(
         'world_name',
-        default_value='world2',
+        default_value='world1',
         description='Name of the world file to load (without .sdf extension)'
     )
 

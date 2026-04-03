@@ -13,7 +13,7 @@ def generate_launch_description():
 
     map_name_arg = DeclareLaunchArgument(
         'map_name',
-        default_value='map_iter_2',
+        default_value='world1_map',
         description='Map yaml filename without extension'
     )
 
