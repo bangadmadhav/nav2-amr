@@ -63,7 +63,7 @@ ros2 launch robot_bringup nav2.launch.py map_name:=world1 planner:=navfn control
 * Maps and worlds are included for testing different scenarios
 
 ### Demo
-- AMR Navigation demo:
-  Video: https://youtu.be/gft94JqwDNI
+- AMR Navigation demo:<br />
+  Video: https://youtu.be/gft94JqwDNI <br />
   Image: ![AMR Navigation in Rviz](/assets/navigation_rviz.png)
   
