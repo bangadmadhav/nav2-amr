@@ -80,9 +80,18 @@ def generate_launch_description():
     spawn_robot_node = Node(
         package="ros_gz_sim",
         executable="create",
-        arguments=["-topic", "robot_description"]
+        arguments=[
+            "-topic", "robot_description",
+            "-name", "amr_bot",
+            "-x", "0.0",
+            "-y", "0.0",
+            "-z", "0.1",
+            "-R", "0.0",   # roll
+                "-P", "0.0",   # pitch
+                "-Y", "0.0"    # yaw
+        ],
+        output="screen"
     )
-
     # # ROS-Gazebo bridge
     # bridge_node = Node(
     #     package="ros_gz_bridge",
@@ -117,7 +126,7 @@ def generate_launch_description():
     #     output='screen',
     # )
 
-        # Delay bridge to ensure sensor topics are available
+    # Delay bridge to ensure sensor topics are available
     delayed_bridge = TimerAction(
         period=5.0,
         actions=[
@@ -161,6 +170,11 @@ def generate_launch_description():
         ]
     )
 
+    delayed_spawn = TimerAction(
+        period=2.0,
+        actions=[spawn_robot_node]
+    )
+
     odom_relay_node = Node(
         package='topic_tools',
         executable='relay',
@@ -196,7 +210,8 @@ def generate_launch_description():
         robot_state_publisher_node,
         rviz_node,
         gazebo_node,
-        spawn_robot_node,
+        delayed_spawn,
+        # spawn_robot_node,
         # bridge_node,
         # joint_state_broadcaster_spawner,
         # diff_drive_controller_spawner
