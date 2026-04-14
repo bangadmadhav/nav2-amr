@@ -26,6 +26,7 @@
     <!-- Gazebo Harmonic sensor plugin -->
     <gazebo reference="lidar_link">
         <sensor name="lidar_sensor" type="gpu_lidar">
+            <frame_name>lidar_link</frame_name>
             <topic>scan</topic>
             <update_rate>10</update_rate>
             <always_on>true</always_on>
@@ -53,6 +54,65 @@
                     <stddev>0.01</stddev>
                 </noise>
             </lidar>
+        </sensor>
+    </gazebo>
+
+    <gazebo>
+        <plugin name='gz::sim::systems::Imu' filename='gz-sim-imu-system'/>
+    </gazebo>
+
+    <gazebo reference="imu_link">
+        <sensor name="imu" type="imu">
+            <always_on>true</always_on>
+            <update_rate>100</update_rate>
+            <gz_frame_id>imu_link</gz_frame_id>
+            <topic>imu</topic>
+            <!-- <visualize>true</visualize>
+            <frame>
+                <pose relative_to="imu_link">0 0 0 0 0 0</pose>
+            </frame> -->
+            <imu>
+                <angular_velocity>
+                    <x>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-4</stddev>
+                        </noise>
+                    </x>
+                    <y>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-4</stddev>
+                        </noise>
+                    </y>
+                    <z>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>2e-4</stddev>
+                        </noise>
+                    </z>
+                </angular_velocity>
+                <linear_acceleration>
+                    <x>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>1.7e-2</stddev>
+                        </noise>
+                    </x>
+                    <y>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>1.7e-2</stddev>
+                        </noise>
+                    </y>
+                    <z>
+                        <noise type="gaussian">
+                            <mean>0.0</mean>
+                            <stddev>1.7e-2</stddev>
+                        </noise>
+                    </z>
+                </linear_acceleration>
+            </imu>
         </sensor>
     </gazebo>
 

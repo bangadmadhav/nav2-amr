@@ -18,6 +18,10 @@
     <xacro:property name="lidar_radius"     value="0.04"/>
     <xacro:property name="lidar_height"     value="0.1"/>
 
+    <!-- IMU -->
+    <xacro:property name="imu_length" value="0.04"/>
+    <xacro:property name="imu_height" value="0.01"/>
+
     <!-- Mass values (kg) -->
     <xacro:property name="chassis_mass"     value="3"/>  
     <xacro:property name="wheel_mass"       value="0.12"/>  

@@ -130,6 +130,9 @@
     <!-- LiDAR -->
     <xacro:include filename="$(find robot_description)/urdf/lidar.xacro" />
 
+    <!-- IMU -->
+    <xacro:include filename="$(find robot_description)/urdf/imu.xacro" />
+
     <!-- GAZEBO SETUP: Plugin Configuration -->
     <xacro:include filename="$(find robot_description)/urdf/gazebo_setup.xacro" />    
     <!-- ROS2 Control SETUP: -->
