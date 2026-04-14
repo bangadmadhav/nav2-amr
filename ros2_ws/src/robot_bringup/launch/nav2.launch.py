@@ -1,7 +1,7 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, TimerAction
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -9,7 +9,9 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
 
     bringup_pkg = get_package_share_directory('robot_bringup')
-    nav2_config_dir = os.path.join(bringup_pkg, 'config', 'nav2')  
+    nav2_config_dir = os.path.join(bringup_pkg, 'config', 'nav2')
+    ekf_map_config_file = os.path.join(bringup_pkg, 'config', 'ekf_map.yaml')
+  
 
     map_name_arg = DeclareLaunchArgument(
         'map_name',
@@ -136,16 +138,32 @@ def generate_launch_description():
             'use_sim_time': True,
             'autostart': True,
             'node_names': [
-                'map_server', 
-                'amcl', 
+                'map_server',
+                'amcl',
+                'bt_navigator',
                 'planner_server',
                 'controller_server',
                 'behavior_server',
-                'velocity_smoother',
-                'bt_navigator'
+                'velocity_smoother'
             ]
         }]
     )
+
+    # delayed_ekf_map = TimerAction(
+    #     period=10.0,   # wait for map_server + AMCL to warm up first
+    #     actions=[
+    #         Node(
+    #             package='robot_localization',
+    #             executable='ekf_node',
+    #             name='ekf_map',
+    #             output='screen',
+    #             parameters=[ekf_map_config_file, {'use_sim_time': True}],
+    #             # remappings=[
+    #             #     ('/initialpose', '/initialpose')
+    #             # ]
+    #         )
+    #     ]
+    # )
 
     return LaunchDescription([
         map_name_arg,
@@ -163,4 +181,6 @@ def generate_launch_description():
         bt_navigator_node,
 
         lifecycle_manager_node,
+        
+        # delayed_ekf_map
     ])

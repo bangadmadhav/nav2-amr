@@ -28,7 +28,7 @@ behavior_server:
     local_frame: odom
     global_frame: map
     robot_base_frame: base_footprint
-    transform_tolerance: 0.1
+    transform_tolerance: 0.2
 
     # Recovery motion limits
     simulate_ahead_time: 2.0

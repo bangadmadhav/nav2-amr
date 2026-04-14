@@ -22,6 +22,7 @@ def generate_launch_description():
     urdf_file = os.path.join(description_pkg_share, 'urdf', 'robot_description.urdf.xacro')
     rviz_config_file = os.path.join(bringup_pkg_share, 'config', 'newDisplayTest.rviz')
     controllers_yaml = os.path.join(bringup_pkg_share, 'config', 'controllers.yaml')
+    ekf_config_file  = os.path.join(bringup_pkg_share, 'config', 'ekf.yaml')  
 
     # robot_description parameter
     robot_model_description = ParameterValue(
@@ -83,48 +84,11 @@ def generate_launch_description():
         arguments=[
             "-topic", "robot_description",
             "-name", "amr_bot",
-            "-x", "0.0",
-            "-y", "0.0",
-            "-z", "0.1",
-            "-R", "0.0",   # roll
-                "-P", "0.0",   # pitch
-                "-Y", "0.0"    # yaw
+            "-x", "0.0", "-y", "0.0", "-z", "0.1",
+            "-R", "0.0", "-P", "0.0", "-Y", "0.0"
         ],
         output="screen"
     )
-    # # ROS-Gazebo bridge
-    # bridge_node = Node(
-    #     package="ros_gz_bridge",
-    #     executable="parameter_bridge",
-    #     parameters=[{
-    #         "config_file": os.path.join(bringup_pkg_share, "config", "gazebo_bridge.yaml")
-    #     }],
-    #     output="screen"
-    # )
-
-    # # Controller spawners
-    # # Note: controller_manager is started by gz_ros2_control plugin in Gazebo,
-    # # so we only need spawners here, NOT ros2_control_node
-    # joint_state_broadcaster_spawner = Node(
-    #     package="controller_manager",
-    #     executable="spawner",
-    #     arguments=[
-    #         "joint_state_broadcaster",
-    #         "--controller-manager",
-    #         "/controller_manager"
-    #     ],
-    # )
-
-    # diff_drive_controller_spawner = Node(
-    #     package='controller_manager',
-    #     executable='spawner',
-    #     arguments=[
-    #         'diff_drive_controller',
-    #         '--controller-manager',
-    #         '/controller_manager'
-    #     ],
-    #     output='screen',
-    # )
 
     # Delay bridge to ensure sensor topics are available
     delayed_bridge = TimerAction(
@@ -136,6 +100,9 @@ def generate_launch_description():
                 parameters=[{
                     "config_file": os.path.join(bringup_pkg_share, "config", "gazebo_bridge.yaml")
                 }],
+                remappings=[
+                    ('/imu', '/imu/out') 
+                ],
                 output="screen"
             )
         ]
@@ -153,6 +120,7 @@ def generate_launch_description():
                     "--controller-manager",
                     "/controller_manager"
                 ],
+                parameters=[{"use_sim_time": True}],
             ),
             Node(
                 package='controller_manager',
@@ -163,6 +131,7 @@ def generate_launch_description():
                     '/controller_manager'
                 ],
                 output='screen',
+                parameters=[{"use_sim_time": True}],
                 remappings=[
                     ('cmd_vel', '/cmd_vel_stamped')
                 ]
@@ -194,15 +163,50 @@ def generate_launch_description():
         parameters=[{'use_sim_time': True}]
     )
 
+    # twist_to_stamped_node = Node(
+    #     package='testing',
+    #     executable='twist_to_stamped',
+    #     name='twist_to_stamped',
+    #     parameters=[{
+    #         'input_topic': '/cmd_vel_smoothed',
+    #         'output_topic': '/diff_drive_controller/cmd_vel'  # ← direct to controller
+    #     }]
+    # )
     twist_to_stamped_node = Node(
         package='testing',
         executable='twist_to_stamped',
         name='twist_to_stamped',
         parameters=[{
-            'input_topic': '/cmd_vel_smoothed',
+            'use_sim_time': True,
+            'input_topic': '/cmd_vel',
             'output_topic': '/diff_drive_controller/cmd_vel'  # ← direct to controller
         }]
     )
+
+    # ── EKF node (odometry stabilization) ──────────────────────────────────
+    # Delayed to 8s to ensure diff_drive_controller is publishing odom first.
+    # EKF fuses /diff_drive_controller/odom + /imu → /odometry/filtered
+    # and takes over the odom→base_footprint TF from diff_drive_controller.
+
+    # delayed_ekf = TimerAction(
+    #     period=8.0,
+    #     actions=[
+    #         Node(
+    #             package='robot_localization',
+    #             executable='ekf_node',
+    #             name='ekf_filter_node',
+    #             output='screen',
+    #             parameters=[
+    #                 ekf_config_file,
+    #                 {'use_sim_time': True}
+    #             ],
+    #             remappings=[
+    #                 ('odometry/filtered', '/odometry/filtered'),
+    #                 ('/imu', '/imu/out')
+    #             ]
+    #         )
+    #     ]
+    # )
 
 
     return LaunchDescription([
@@ -215,6 +219,7 @@ def generate_launch_description():
         # bridge_node,
         # joint_state_broadcaster_spawner,
         # diff_drive_controller_spawner
+        # delayed_ekf,
         delayed_bridge,
         delayed_controllers,
         odom_relay_node,
