@@ -1,8 +1,16 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from launch_ros.actions import LifecycleNode
+import os
+from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
+
+    slam_toolbox_config = os.path.join(
+        get_package_share_directory('robot_bringup'),
+        'config',
+        'slam_toolbox_config.yaml'
+    )
 
     slam_toolbox_node = LifecycleNode(
         package='slam_toolbox',
@@ -13,8 +21,8 @@ def generate_launch_description():
         parameters=[{
             'use_sim_time': True,
             'scan_topic': '/scan_fixed',
-            'autostart': True,        #Trying this so to avoid lifecycle configure and activate commands
-
+            'autostart': True,
+            'max_laser_range': 8.0,
         }]
     )
 
