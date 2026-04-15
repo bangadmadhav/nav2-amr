@@ -8,14 +8,12 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
 
-    bringup_pkg = get_package_share_directory('robot_bringup')
-    nav2_config_dir = os.path.join(bringup_pkg, 'config', 'nav2')
-    ekf_map_config_file = os.path.join(bringup_pkg, 'config', 'ekf_map.yaml')
-  
+    nav2_config_pkg = get_package_share_directory('nav2_config') 
+    maps_pkg = get_package_share_directory('maps') 
 
     map_name_arg = DeclareLaunchArgument(
-        'map_name',
-        default_value='world1_map',
+        'world',
+        default_value='world1',
         description='Map yaml filename without extension'
     )
 
@@ -32,28 +30,26 @@ def generate_launch_description():
     )
 
     map_file = PathJoinSubstitution([
-        FindPackageShare('robot_bringup'),
-        'maps',
-        [LaunchConfiguration('map_name'), '.yaml']
+        FindPackageShare('maps'),
+        LaunchConfiguration('world'),
+        'map.yaml'
     ])
 
     # Parameter Files
-    amcl_params = os.path.join(bringup_pkg, 'config', 'nav2', 'amcl_params.yaml')
-    costmap_params = os.path.join(bringup_pkg, 'config', 'nav2', 'costmap_params.yaml')
-    bt_params = os.path.join(nav2_config_dir, 'bt_navigator_params.yaml')
-    behavior_params = os.path.join(nav2_config_dir, 'behavior_params.yaml')
+    amcl_params = os.path.join(nav2_config_pkg, 'amcl', 'amcl_params.yaml')
+    costmap_params = os.path.join(nav2_config_pkg, 'costmaps', 'costmap_params.yaml')
+    bt_params = os.path.join(nav2_config_pkg, 'bt_navigator', 'bt_navigator_params.yaml')
+    behavior_params = os.path.join(nav2_config_pkg, 'behaviors', 'behavior_params.yaml')
 
     planner_params = PathJoinSubstitution([
-        FindPackageShare('robot_bringup'),
-        'config',
-        'nav2',
+        FindPackageShare('nav2_config'),
         'planners',
         [LaunchConfiguration('planner'), '_params.yaml']
     ])
     
     controller_params = PathJoinSubstitution([
-        FindPackageShare('robot_bringup'),
-        'config', 'nav2', 'controllers',
+        FindPackageShare('nav2_config'),
+        'controllers',
         [LaunchConfiguration('controller'), '_params.yaml']
     ])
 

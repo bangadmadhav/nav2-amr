@@ -21,8 +21,6 @@ def generate_launch_description():
     # Define various paths
     urdf_file = os.path.join(description_pkg_share, 'urdf', 'robot_description.urdf.xacro')
     rviz_config_file = os.path.join(bringup_pkg_share, 'config', 'newDisplayTest.rviz')
-    controllers_yaml = os.path.join(bringup_pkg_share, 'config', 'controllers.yaml')
-    ekf_config_file  = os.path.join(bringup_pkg_share, 'config', 'ekf.yaml')  
 
     # robot_description parameter
     robot_model_description = ParameterValue(
@@ -32,16 +30,16 @@ def generate_launch_description():
     
     # Launch Argument for World Name
     world_name_arg = DeclareLaunchArgument(
-        'world_name',
+        'world',
         default_value='world1',
-        description='Name of the world file to load (without .sdf extension)'
+        description='Name of the world file'
     )
 
     # Resolve world file path from argument
     world_file = PathJoinSubstitution([
-        FindPackageShare('robot_bringup'),
-        'worlds',
-        [LaunchConfiguration('world_name'), '.sdf']  # appends .sdf automatically
+        FindPackageShare('worlds'),
+        LaunchConfiguration('world'),
+        'world.sdf'  # appends .sdf automatically
     ])
 
     # robot_state_publisher node
@@ -156,58 +154,33 @@ def generate_launch_description():
     )
 
     scan_frame_fixer_node = Node(
-        package='testing',
+        package='helper_nodes',
         executable='scan_frame_fixer',
         name='scan_frame_fixer',
         output='screen',
         parameters=[{'use_sim_time': True}]
     )
 
-    # twist_to_stamped_node = Node(
-    #     package='testing',
-    #     executable='twist_to_stamped',
-    #     name='twist_to_stamped',
-    #     parameters=[{
-    #         'input_topic': '/cmd_vel_smoothed',
-    #         'output_topic': '/diff_drive_controller/cmd_vel'  # ← direct to controller
-    #     }]
-    # )
     twist_to_stamped_node = Node(
-        package='testing',
+        package='helper_nodes',
         executable='twist_to_stamped',
         name='twist_to_stamped',
         parameters=[{
-            'use_sim_time': True,
-            'input_topic': '/cmd_vel',
+            'input_topic': '/cmd_vel_smoothed',
             'output_topic': '/diff_drive_controller/cmd_vel'  # ← direct to controller
         }]
     )
-
-    # ── EKF node (odometry stabilization) ──────────────────────────────────
-    # Delayed to 8s to ensure diff_drive_controller is publishing odom first.
-    # EKF fuses /diff_drive_controller/odom + /imu → /odometry/filtered
-    # and takes over the odom→base_footprint TF from diff_drive_controller.
-
-    # delayed_ekf = TimerAction(
-    #     period=8.0,
-    #     actions=[
-    #         Node(
-    #             package='robot_localization',
-    #             executable='ekf_node',
-    #             name='ekf_filter_node',
-    #             output='screen',
-    #             parameters=[
-    #                 ekf_config_file,
-    #                 {'use_sim_time': True}
-    #             ],
-    #             remappings=[
-    #                 ('odometry/filtered', '/odometry/filtered'),
-    #                 ('/imu', '/imu/out')
-    #             ]
-    #         )
-    #     ]
+    # USE When running SLAM
+    # twist_to_stamped_node = Node(
+    #     package='helper_nodes',
+    #     executable='twist_to_stamped',
+    #     name='twist_to_stamped',
+    #     parameters=[{
+    #         'use_sim_time': True,
+    #         'input_topic': '/cmd_vel',
+    #         'output_topic': '/diff_drive_controller/cmd_vel'  # ← direct to controller
+    #     }]
     # )
-
 
     return LaunchDescription([
         world_name_arg,

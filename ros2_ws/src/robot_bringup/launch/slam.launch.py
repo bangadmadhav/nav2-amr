@@ -6,12 +6,6 @@ from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
 
-    slam_toolbox_config = os.path.join(
-        get_package_share_directory('robot_bringup'),
-        'config',
-        'slam_toolbox_config.yaml'
-    )
-
     slam_toolbox_node = LifecycleNode(
         package='slam_toolbox',
         executable='sync_slam_toolbox_node',
@@ -27,7 +21,7 @@ def generate_launch_description():
     )
 
     twist_to_stamped_node = Node(
-        package='testing',
+        package='helper_nodes',
         executable='twist_to_stamped',
         name='twist_to_stamped',
         parameters=[{
