@@ -1,0 +1,48 @@
+-Navfn and RPP
+-theta_star and RPP
+-smac and RPP
+-Navfn and dwb
+-theta_star and dwb
+-smac and dwb
+-Navfn and graceful
+-theta_star and graceful
+-smac and graceful
+-Navfn and mppi
+-theta_star and mppi
+-smac and mppi
+
+
+First Run for World 1 (60 Rows)
+Then, World 2 (60 Rows)
+Then World 3 (60 Rows)
+
+---
+Phase 1 Update:
+
+WORLD1:
+    -Navfn and rpp
+    -theta_star and rpp
+    -smac and rpp
+    -navfn and dwb
+    -theta_star and dwb
+    -smac and dwb
+    -navfn and graceful
+    -theta_star and graceful
+    -smac and graceful
+    -navfn and mppi
+    -theta_star and mppi
+    -smac and mppi
+
+WORLD2:
+    -Navfn and mppi
+    -theta_star and mppi
+    -navfn and graceful
+    -theta_star and graceful
+    -navfn and dwb
+    -theta_star and dwb
+    -smac and dwb
+    -navfn and rpp
+    -theta_star and rpp
+    -smac and rpp
+    -smac and mppi
+    
