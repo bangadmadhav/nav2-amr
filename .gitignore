@@ -6,6 +6,8 @@ ros2_ws/data/
 .vscode/
 
 ros2_ws/src/nav_logger/datapoints
+data/dataset_A.csv
+data/dataset_B.csv
 
 devel/
 logs/
@@ -58,3 +60,4 @@ qtcreator-*
 
 # Catkin custom files
 CATKIN_IGNORE
+
